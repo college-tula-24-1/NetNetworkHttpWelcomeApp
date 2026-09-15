@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="NetNetworkHttpWelcomeApp/NetNetworkHttpWelcomeApp.csproj" />
+  <Project Path="WebServerApplication/WebServerApplication.csproj" />
+  <Project Path="WebServerTwoApplication/WebServerTwoApplication.csproj" Id="06520919-f801-4adb-b482-30f5e179a4a4" />
+</Solution>
