@@ -1,13 +1,15 @@
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
+int id = 0;
 List<Employee> employees = new()
 {
-    new(1, "Mikky", 29),
-    new(2, "Bobby", 32),
-    new(3, "Sammy", 24),
+    new(){ Id = ++id, Name = "Mikky", Age = 29 },
+    new(){ Id = ++id, Name = "Bobby", Age = 32 },
+    new(){ Id = ++id, Name = "Sammy", Age = 24 },
 };
 
+app.MapGet("/", () => employees);
 
 
 app.MapGet("/{id?}", (int? id) =>
@@ -21,9 +23,44 @@ app.MapGet("/{id?}", (int? id) =>
         Employee employee = employees.FirstOrDefault(e => e.Id == id)!;
         return Results.Json(employee);
     }
-        
+});
+
+app.MapPost("/", (Employee employee) =>
+{
+    employee.Id = ++id;
+    employees.Add(employee);
+    return Results.Json(employee);
+});
+
+app.MapPut("/", (Employee employeeClient) =>
+{
+    var employee = employees.FirstOrDefault(e => e.Id == employeeClient.Id);
+    if(employee is null)
+        return Results.NotFound(new { Message = $"Employee with id {id} not found" });
+
+    employee.Name = employeeClient.Name;
+    employee.Age = employeeClient.Age;
+
+    return Results.Json(employee);
+});
+
+app.MapDelete("/{id}", (int id) =>
+{
+    var employee = employees.FirstOrDefault(e => e.Id == id);
+    if (employee is null)
+        return Results.NotFound(new { Message = $"Employee with id {id} not found" });
+
+    employees.Remove(employee);
+
+    return Results.Json(employee);
 });
 
 app.Run();
 
-record class Employee(int Id, string Name, int Age);
+class Employee
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public int Age { get; set; }
+}
+    
